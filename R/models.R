@@ -93,6 +93,16 @@ predict_model.lda <- function(x, newdata, type, ...) {
     prob = as.data.frame(res$posterior, check.names = FALSE)
   )
 }
+
+predict_model.rf <- function(x, newdata, type, ...) {
+  res <- predict(x, newdata = newdata, ...)
+  switch(
+    type,
+    raw = data.frame(Response = res$class, stringsAsFactors = FALSE),
+    prob = as.data.frame(res$posterior, check.names = FALSE)
+  )
+}
+
 predict_model.H2OModel <- function(x, newdata, type, ...){
     if (!requireNamespace('h2o', quietly = TRUE)) {
         stop('The h2o package is required for predicting h2o models')
@@ -142,6 +152,9 @@ model_type.xgb.Booster <- function(x, ...) {
   )
 }
 model_type.lda <- function(x, ...) 'classification'
+
+model_type.rf <- function(x, ...) 'classification'
+
 model_type.H2OModel <- function(x, ...) {
     h2o_model_class <- class(x)[[1]]
     if (h2o_model_class %in% c("H2OBinomialModel", "H2OMultinomialModel")) {
